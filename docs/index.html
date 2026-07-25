@@ -1,3 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claude Usage Bar — your Claude limits, in the macOS menu bar</title>
+<meta name="description" content="A calm macOS menu-bar app for your 5-hour and weekly Claude usage — the exact numbers from Claude's usage API, read from your existing Claude Code login. No token to paste.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FBFBFD" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#08080B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-title" content="Usage Bar">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23574FE6'/%3E%3Cg fill='%23fff'%3E%3Crect x='8.5' y='18' width='3' height='6' rx='1.5'/%3E%3Crect x='14.5' y='14' width='3' height='10' rx='1.5'/%3E%3Crect x='20.5' y='9' width='3' height='15' rx='1.5'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Claude Usage Bar — your Claude limits, before you hit them">
+<meta property="og:description" content="A calm macOS menu-bar app for your 5-hour and weekly Claude usage. No token to paste, no account, no analytics.">
+<meta property="og:url" content="https://tugrulcavus.github.io/claude-usage-bar/">
+<meta name="twitter:card" content="summary">
 <style>
   :root {
     --bg: #FBFBFD;
@@ -61,7 +78,12 @@
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overflow-x: clip;
+  }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body {
     margin: 0;
@@ -71,9 +93,15 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.011em;
+    overflow-x: clip;
+    -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 18%, transparent);
   }
+  img, svg { max-width: 100%; height: auto; }
+  /* anchors clear the sticky nav */
+  [id] { scroll-margin-top: 76px; }
   .mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace; }
-  .wrap { width: min(1080px, 92vw); margin-inline: auto; }
+  .wrap { width: min(1080px, 100% - 32px); margin-inline: auto;
+    padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
   a { color: inherit; text-decoration: none; }
 
   /* Nav */
@@ -86,7 +114,8 @@
   .nav-in { display: flex; align-items: center; justify-content: space-between; height: 60px; }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 640; letter-spacing: -0.02em; }
   .nav-links { display: flex; align-items: center; gap: 26px; }
-  .nav-links a { color: var(--muted); font-size: 0.92rem; font-weight: 500; transition: color .15s; }
+  .nav-links a { color: var(--muted); font-size: 0.92rem; font-weight: 500; transition: color .15s;
+    display: inline-flex; align-items: center; min-height: 44px; }
   .nav-links a:hover { color: var(--ink); }
   .nav-cta { color: var(--accent-ink) !important; font-weight: 600; }
   @media (max-width: 680px) { .nav-links a:not(.nav-cta) { display: none; } }
@@ -252,7 +281,8 @@
   .badges span { display: inline-flex; align-items: center; gap: 6px; }
 
   /* Footer */
-  footer { border-top: 1px solid var(--hair-2); padding: 40px 0 56px; color: var(--faint); }
+  footer { border-top: 1px solid var(--hair-2); color: var(--faint);
+    padding: 40px 0 calc(56px + env(safe-area-inset-bottom)); }
   .foot-in { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
   .foot-brand { display: grid; gap: 8px; max-width: 40ch; }
   .foot-brand .disc { font-size: 0.82rem; color: var(--faint); }
@@ -260,7 +290,59 @@
   .foot-links b { display: block; color: var(--ink); font-weight: 620; margin-bottom: 8px; font-size: 0.85rem; }
   .foot-links a { display: block; color: var(--muted); padding: 3px 0; }
   .foot-links a:hover { color: var(--ink); }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 760px) {
+    section { padding: clamp(44px, 8vw, 72px) 0; }
+    .lede { font-size: 1rem; }
+    .dl-hd { padding: 18px; gap: 12px; }
+    .dl-hd .btn { width: 100%; justify-content: center; }
+    .code { padding: 14px 18px; font-size: 0.8rem; }
+    .code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .dl-card > p { padding: 0 18px 16px; }
+    .foot-in { flex-direction: column; gap: 28px; }
+    .foot-links { gap: 32px; }
+  }
+
+  @media (max-width: 560px) {
+    .wrap { width: min(1080px, 100% - 28px); }
+    header.hero { padding-top: clamp(32px, 9vw, 60px); }
+    h1 { font-size: clamp(1.95rem, 8.6vw, 2.6rem); max-width: 18ch; }
+    .sub { font-size: 1rem; margin-top: 16px; }
+    h2 { font-size: clamp(1.5rem, 6.4vw, 2rem); max-width: 24ch; }
+    .eyebrow { font-size: 0.74rem; padding: 5px 10px; }
+    .cta-row { gap: 10px; margin-top: 24px; }
+    .cta-row .btn { flex: 1 1 100%; justify-content: center; padding: 13px 18px; }
+    .trust { gap: 6px 14px; font-size: 0.8rem; margin-top: 18px; }
+
+    /* menu-bar + popover mock */
+    .stage { width: 100%; margin-top: clamp(28px, 7vw, 44px); }
+    .menubar { gap: 9px; padding: 0 10px; }
+    .pop { padding: 12px; gap: 10px; border-radius: 14px; }
+    .pop-head .t { font-size: 0.96rem; }
+    .card { padding: 11px; }
+    .card-top .pct { font-size: 1.2rem; }
+    .card-sub { font-size: 0.7rem; }
+
+    .grid, .steps, .icons, .proof { margin-top: 28px; gap: 12px; }
+    .feat { padding: 18px; border-radius: 14px; }
+    .step { padding: 20px; border-radius: 14px; }
+    .ic { padding: 18px 10px; }
+    .proof .frame { padding: 16px; border-radius: 14px; }
+    .privacy-note { margin-top: 22px; padding: 14px 16px; font-size: 0.9rem; text-align: left; }
+    .dl { margin-top: 28px; }
+    .dl-card { border-radius: 14px; }
+    .badges { font-size: 0.78rem; gap: 6px 12px; }
+    footer { padding: 32px 0 calc(44px + env(safe-area-inset-bottom)); }
+  }
+
+  @media (max-width: 380px) {
+    .menubar .mb-ico:nth-of-type(-n+2) { display: none; }
+    .trust span:nth-child(n+4) { display: none; }
+  }
 </style>
+</head>
+<body>
 
 <nav>
   <div class="wrap nav-in">
@@ -567,9 +649,15 @@ curl -fsSL <span class="p">https://raw.githubusercontent.com/tugrulcavus/claude-
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(cmd).then(done, done);
       } else {
-        var t = document.createElement('textarea'); t.value = cmd; document.body.appendChild(t);
-        t.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(t); done();
+        var t = document.createElement('textarea'); t.value = cmd; t.readOnly = true;
+        t.setAttribute('aria-hidden', 'true');
+        t.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px';
+        document.body.appendChild(t);
+        t.select(); t.setSelectionRange(0, cmd.length); // iOS needs an explicit range
+        try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(t); done();
       }
     });
   })();
 </script>
+</body>
+</html>
