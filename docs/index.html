@@ -1,0 +1,575 @@
+<style>
+  :root {
+    --bg: #FBFBFD;
+    --surface: #FFFFFF;
+    --surface-2: #F3F3F7;
+    --ink: #16161C;
+    --muted: #5F5F6B;
+    --faint: #8C8C98;
+    --hair: rgba(18, 18, 28, 0.10);
+    --hair-2: rgba(18, 18, 28, 0.06);
+    --accent: #574FE6;
+    --accent-2: #8B45E8;
+    --accent-ink: #4B43D8;
+    --ok: #23A65B;
+    --warn: #D69A12;
+    --high: #EC7A26;
+    --crit: #E24551;
+    --shadow: 0 24px 60px -24px rgba(30, 26, 80, 0.28), 0 8px 24px -12px rgba(20, 20, 40, 0.16);
+    --wall: radial-gradient(120% 120% at 20% 10%, rgba(87, 79, 230, 0.14), transparent 55%),
+            radial-gradient(120% 120% at 90% 30%, rgba(139, 69, 232, 0.12), transparent 55%);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #08080B;
+      --surface: #111117;
+      --surface-2: #17171F;
+      --ink: #F1F1F5;
+      --muted: #9A9AA6;
+      --faint: #6C6C78;
+      --hair: rgba(255, 255, 255, 0.11);
+      --hair-2: rgba(255, 255, 255, 0.06);
+      --accent: #837CF4;
+      --accent-2: #A468F2;
+      --accent-ink: #9A93FF;
+      --ok: #35C978;
+      --warn: #EBB328;
+      --high: #F58A34;
+      --crit: #F05863;
+      --shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.75), 0 10px 30px -16px rgba(0, 0, 0, 0.6);
+      --wall: radial-gradient(120% 120% at 20% 10%, rgba(120, 110, 245, 0.18), transparent 55%),
+              radial-gradient(120% 120% at 90% 30%, rgba(150, 90, 240, 0.14), transparent 55%);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #FBFBFD; --surface: #FFFFFF; --surface-2: #F3F3F7; --ink: #16161C;
+    --muted: #5F5F6B; --faint: #8C8C98; --hair: rgba(18,18,28,0.10); --hair-2: rgba(18,18,28,0.06);
+    --accent: #574FE6; --accent-2: #8B45E8; --accent-ink: #4B43D8;
+    --ok:#23A65B; --warn:#D69A12; --high:#EC7A26; --crit:#E24551;
+    --shadow: 0 24px 60px -24px rgba(30,26,80,0.28), 0 8px 24px -12px rgba(20,20,40,0.16);
+    --wall: radial-gradient(120% 120% at 20% 10%, rgba(87,79,230,0.14), transparent 55%),
+            radial-gradient(120% 120% at 90% 30%, rgba(139,69,232,0.12), transparent 55%);
+  }
+  :root[data-theme="dark"] {
+    --bg: #08080B; --surface: #111117; --surface-2: #17171F; --ink: #F1F1F5;
+    --muted: #9A9AA6; --faint: #6C6C78; --hair: rgba(255,255,255,0.11); --hair-2: rgba(255,255,255,0.06);
+    --accent: #837CF4; --accent-2: #A468F2; --accent-ink: #9A93FF;
+    --ok:#35C978; --warn:#EBB328; --high:#F58A34; --crit:#F05863;
+    --shadow: 0 30px 70px -30px rgba(0,0,0,0.75), 0 10px 30px -16px rgba(0,0,0,0.6);
+    --wall: radial-gradient(120% 120% at 20% 10%, rgba(120,110,245,0.18), transparent 55%),
+            radial-gradient(120% 120% at 90% 30%, rgba(150,90,240,0.14), transparent 55%);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.011em;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace; }
+  .wrap { width: min(1080px, 92vw); margin-inline: auto; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Nav */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: saturate(180%) blur(18px);
+    border-bottom: 1px solid var(--hair-2);
+  }
+  .nav-in { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 640; letter-spacing: -0.02em; }
+  .nav-links { display: flex; align-items: center; gap: 26px; }
+  .nav-links a { color: var(--muted); font-size: 0.92rem; font-weight: 500; transition: color .15s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { color: var(--accent-ink) !important; font-weight: 600; }
+  @media (max-width: 680px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+  /* App mark */
+  .mark { width: 26px; height: 26px; border-radius: 7px; flex: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .mark i { display: flex; align-items: flex-end; gap: 1.5px; height: 12px; }
+  .mark i b { width: 2.5px; border-radius: 2px; background: rgba(255,255,255,.95); }
+  .mark i b:nth-child(1) { height: 5px; } .mark i b:nth-child(2) { height: 8px; } .mark i b:nth-child(3) { height: 11px; }
+
+  /* Hero */
+  header.hero { padding: clamp(48px, 8vw, 92px) 0 24px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ""; position: absolute; inset: -30% 0 auto; height: 640px; background: var(--wall);
+    filter: blur(10px); z-index: 0; pointer-events: none; }
+  .hero > * { position: relative; z-index: 1; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 600;
+    color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 12%, transparent);
+    padding: 5px 12px; border-radius: 999px; letter-spacing: 0.01em; }
+  h1 { font-size: clamp(2.3rem, 5.4vw, 3.9rem); line-height: 1.03; letter-spacing: -0.035em;
+    font-weight: 680; margin: 20px auto 0; max-width: 15ch; text-wrap: balance; }
+  h1 .g { background: linear-gradient(120deg, var(--accent), var(--accent-2)); -webkit-background-clip: text;
+    background-clip: text; color: transparent; }
+  .sub { margin: 20px auto 0; max-width: 56ch; font-size: clamp(1.02rem, 1.9vw, 1.22rem);
+    color: var(--muted); text-wrap: pretty; }
+  .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .btn { display: inline-flex; align-items: center; gap: 9px; padding: 12px 22px; border-radius: 12px;
+    font-weight: 600; font-size: 0.98rem; border: 1px solid transparent; transition: transform .12s, background .15s, border-color .15s; cursor: pointer; }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+    box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--accent) 70%, transparent); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-ghost { background: var(--surface); color: var(--ink); border-color: var(--hair); }
+  .btn-ghost:hover { border-color: color-mix(in srgb, var(--ink) 24%, transparent); }
+  .trust { margin: 22px auto 0; display: flex; gap: 8px 18px; justify-content: center; flex-wrap: wrap;
+    color: var(--faint); font-size: 0.84rem; font-weight: 500; }
+  .trust span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ok); }
+
+  /* Stage + popover */
+  .stage { margin: clamp(34px, 6vw, 56px) auto 0; width: min(560px, 94vw); position: relative; }
+  .menubar { height: 26px; border-radius: 12px 12px 0 0; background: color-mix(in srgb, var(--ink) 6%, var(--surface));
+    border: 1px solid var(--hair); border-bottom: none; display: flex; align-items: center; justify-content: flex-end;
+    gap: 14px; padding: 0 14px; color: var(--muted); }
+  .menubar .mb-ico { opacity: .55; font-size: 11px; }
+  .glyph { display: inline-flex; flex-direction: column; gap: 2.5px; }
+  .glyph s { display: block; height: 3px; border-radius: 2px; background: currentColor; opacity: .28; position: relative; width: 16px; }
+  .glyph s::after { content: ""; position: absolute; inset: 0; width: var(--f, 40%); border-radius: 2px; background: currentColor; opacity: 1; }
+  .glyph.lit s::after { background: var(--high); }
+  .mb-pct { font-size: 11px; font-weight: 600; }
+
+  .pop { border-radius: 16px; padding: 14px; box-shadow: var(--shadow);
+    background: color-mix(in srgb, var(--surface) 96%, transparent); border: 1px solid var(--hair);
+    backdrop-filter: blur(30px); display: grid; gap: 11px; }
+  .pop-head { display: flex; align-items: center; gap: 9px; }
+  .pop-head .t { font-weight: 680; font-size: 1.02rem; letter-spacing: -0.02em; }
+  .pill { margin-left: auto; font-size: 0.68rem; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+    background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+  .verdict { display: flex; align-items: center; gap: 7px; font-size: 0.82rem; font-weight: 560;
+    padding: 7px 11px; border-radius: 9px; }
+  .verdict.good { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .card { border: 1px solid var(--hair-2); background: color-mix(in srgb, var(--ink) 3.5%, transparent);
+    border-radius: 12px; padding: 12px; display: grid; gap: 9px; }
+  .card-top { display: flex; align-items: baseline; gap: 7px; }
+  .card-top .lbl { font-size: 0.86rem; font-weight: 620; color: var(--muted); }
+  .card-top .pct { margin-left: auto; font-weight: 720; font-size: 1.35rem; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums; }
+  .card-top .pct small { font-size: 0.72rem; font-weight: 620; opacity: .72; }
+  .meter { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 11%, transparent); position: relative; overflow: visible; }
+  .meter .fill { height: 100%; border-radius: 999px; width: 40%; transition: width .5s ease, background .5s ease; }
+  .meter .tick { position: absolute; top: -2px; width: 2px; height: 12px; border-radius: 2px;
+    background: color-mix(in srgb, var(--ink) 55%, transparent); }
+  .card-sub { display: flex; align-items: center; gap: 5px; font-size: 0.74rem; color: var(--faint);
+    font-variant-numeric: tabular-nums; }
+
+  /* Sections */
+  section { padding: clamp(56px, 9vw, 96px) 0; }
+  .kicker { text-align: center; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent-ink); }
+  h2 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); line-height: 1.08; letter-spacing: -0.03em; font-weight: 660;
+    text-align: center; margin: 12px auto 0; max-width: 20ch; text-wrap: balance; }
+  .lede { text-align: center; color: var(--muted); max-width: 54ch; margin: 14px auto 0; font-size: 1.05rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .feat { background: var(--surface); border: 1px solid var(--hair-2); border-radius: 16px; padding: 22px;
+    display: grid; gap: 9px; align-content: start; transition: border-color .15s, transform .15s; }
+  .feat:hover { border-color: var(--hair); transform: translateY(-2px); }
+  .feat .fi { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+    background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent-ink); margin-bottom: 4px; }
+  .feat h3 { margin: 0; font-size: 1.02rem; font-weight: 640; letter-spacing: -0.015em; }
+  .feat p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+
+  /* Steps */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; counter-reset: s; }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+  .step { position: relative; padding: 24px; border-radius: 16px; background: var(--surface); border: 1px solid var(--hair-2); }
+  .step::before { counter-increment: s; content: counter(s); display: grid; place-items: center;
+    width: 30px; height: 30px; border-radius: 8px; font-weight: 700; font-size: 0.9rem;
+    color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); margin-bottom: 12px; }
+  .step h3 { margin: 0 0 5px; font-size: 1.04rem; font-weight: 640; letter-spacing: -0.015em; }
+  .step p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+  .step .arw { position: absolute; right: -13px; top: 50%; transform: translateY(-50%); color: var(--faint); z-index: 2; }
+  @media (max-width: 760px) { .step .arw { display: none; } }
+  .privacy-note { margin: 30px auto 0; max-width: 60ch; text-align: center; color: var(--muted); font-size: 0.96rem;
+    padding: 16px 20px; border: 1px dashed var(--hair); border-radius: 14px; background: color-mix(in srgb, var(--ok) 5%, transparent); }
+  .privacy-note b { color: var(--ink); }
+
+  /* Icon gallery */
+  .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 40px; }
+  @media (max-width: 620px) { .icons { grid-template-columns: 1fr 1fr; } }
+  .ic { background: var(--surface); border: 1px solid var(--hair-2); border-radius: 14px; padding: 22px 14px;
+    display: grid; gap: 12px; justify-items: center; text-align: center; }
+  .ic .demo { height: 22px; display: flex; align-items: center; color: var(--ink); }
+  .ic .cap { font-size: 0.82rem; color: var(--muted); font-weight: 560; }
+  .bar1 { width: 22px; height: 4px; border-radius: 3px; background: color-mix(in srgb, var(--ink) 26%, transparent); position: relative; }
+  .bar1::after { content:""; position:absolute; inset:0; width: 62%; border-radius: 3px; background: var(--high); }
+  .ring { width: 18px; height: 18px; border-radius: 50%;
+    background: conic-gradient(var(--warn) 0 58%, color-mix(in srgb, var(--ink) 18%, transparent) 0);
+    -webkit-mask: radial-gradient(circle 5.5px at center, transparent 98%, #000 100%);
+            mask: radial-gradient(circle 5.5px at center, transparent 98%, #000 100%); }
+  .pctglyph { font-weight: 660; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+
+  /* Theme proof */
+  .proof { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+  @media (max-width: 720px) { .proof { grid-template-columns: 1fr; } }
+  .proof .frame { border-radius: 18px; padding: 22px; display: grid; gap: 12px; }
+  .proof .plabel { font-size: 0.8rem; font-weight: 600; opacity: .7; display: flex; align-items: center; gap: 7px; }
+  /* forced-light popover */
+  .pl { --s:#fff; --i:#16161C; --m:#5F5F6B; --f:#8C8C98; --h:rgba(18,18,28,.09); }
+  .pd { --s:#121218; --i:#F1F1F5; --m:#9A9AA6; --f:#6C6C78; --h:rgba(255,255,255,.10); }
+  .proof .frame.pl { background: #EFEFF3; }
+  .proof .frame.pd { background: #060608; }
+  .minipop { border-radius: 14px; padding: 13px; display: grid; gap: 10px; background: var(--s);
+    border: 1px solid var(--h); box-shadow: 0 14px 34px -18px rgba(0,0,0,.4); }
+  .minipop .mh { display: flex; align-items: center; gap: 8px; color: var(--i); font-weight: 660; font-size: .95rem; }
+  .minipop .mrow { display: grid; gap: 6px; }
+  .minipop .mtop { display: flex; align-items: baseline; font-size: .8rem; color: var(--m); font-weight: 600; }
+  .minipop .mtop b { margin-left: auto; color: var(--i); font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+  .minimeter { height: 7px; border-radius: 999px; background: color-mix(in srgb, var(--i) 12%, transparent); }
+  .minimeter i { display: block; height: 100%; border-radius: 999px; }
+  .minipop .msub { font-size: .68rem; color: var(--f); }
+  .minipop .mpill { margin-left: auto; font-size: .62rem; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+    background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+
+  /* Download */
+  .dl { max-width: 760px; margin: 40px auto 0; }
+  .dl-card { background: var(--surface); border: 1px solid var(--hair); border-radius: 18px; overflow: hidden; }
+  .dl-hd { padding: 22px 24px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--hair-2); flex-wrap: wrap; }
+  .dl-hd .grow { flex: 1 1 220px; }
+  .dl-hd h3 { margin: 0; font-size: 1.15rem; font-weight: 660; letter-spacing: -0.02em; }
+  .dl-hd p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+  .dl-hd .dl-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .code { background: color-mix(in srgb, var(--ink) 5%, transparent); border-top: 1px solid var(--hair-2);
+    padding: 18px 24px; font-size: 0.86rem; color: var(--ink); overflow-x: auto; }
+  .code pre { margin: 0; }
+  .code .c { color: var(--faint); }
+  .code .p { color: var(--accent-ink); }
+  .badges { display: flex; gap: 8px 14px; flex-wrap: wrap; justify-content: center; margin-top: 20px; color: var(--faint);
+    font-size: 0.82rem; font-weight: 500; }
+  .badges span { display: inline-flex; align-items: center; gap: 6px; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--hair-2); padding: 40px 0 56px; color: var(--faint); }
+  .foot-in { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+  .foot-brand { display: grid; gap: 8px; max-width: 40ch; }
+  .foot-brand .disc { font-size: 0.82rem; color: var(--faint); }
+  .foot-links { display: flex; gap: 40px; flex-wrap: wrap; font-size: 0.9rem; }
+  .foot-links b { display: block; color: var(--ink); font-weight: 620; margin-bottom: 8px; font-size: 0.85rem; }
+  .foot-links a { display: block; color: var(--muted); padding: 3px 0; }
+  .foot-links a:hover { color: var(--ink); }
+</style>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href="#top"><span class="mark"><i><b></b><b></b><b></b></i></span> Usage&nbsp;Bar</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a class="nav-cta" href="#download">Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="eyebrow">● macOS menu bar · for Claude Code</span>
+    <h1>Your Claude limits, <span class="g">before you hit them.</span></h1>
+    <p class="sub">A calm menu-bar app for your 5-hour and weekly Claude usage — the exact numbers from Claude's usage API, read from your existing Claude Code login. No token to paste, no account, no analytics.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#download">↓ Download for macOS</a>
+      <a class="btn btn-ghost" href="#how">See how it works</a>
+    </div>
+    <div class="trust">
+      <span><span class="dot"></span> Official usage numbers</span>
+      <span><span class="dot"></span> Reads usage only · never spends quota</span>
+      <span><span class="dot"></span> No token to paste</span>
+      <span><span class="dot"></span> macOS 13+ · Apple Silicon &amp; Intel</span>
+    </div>
+
+    <div class="stage">
+      <div class="menubar">
+        <span class="mb-ico">✦</span><span class="mb-ico">▹</span><span class="mb-ico">◔</span>
+        <span class="glyph" id="mbGlyph"><s style="--f:20%"></s><s style="--f:28%"></s></span>
+        <span class="mb-pct" id="mbPct">20%</span>
+        <span class="mb-ico">🔋</span>
+      </div>
+      <div class="pop">
+        <div class="pop-head">
+          <span class="mark"><i><b></b><b></b><b></b></i></span>
+          <span class="t">Claude Usage</span>
+          <span class="pill">live</span>
+        </div>
+        <div class="verdict good" id="verdict">✓ &nbsp;On pace</div>
+        <div class="card">
+          <div class="card-top"><span class="lbl">⚡ 5-hour</span><span class="pct" id="p5" style="color:var(--ok)">20<small>%</small></span></div>
+          <div class="meter"><div class="fill" id="f5" style="width:20%;background:var(--ok)"></div><div class="tick" id="t5" style="left:30%"></div></div>
+          <div class="card-sub">🕐 Resets 1:40&nbsp;PM · in 3h</div>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="lbl">🗓 Weekly</span><span class="pct" style="color:var(--ok)">28<small>%</small></span></div>
+          <div class="meter"><div class="fill" style="width:28%;background:var(--ok)"></div><div class="tick" style="left:44%"></div></div>
+          <div class="card-sub">🕐 Resets Sat 6:00&nbsp;AM · in 3d</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="kicker">What you get</div>
+    <h2>Two numbers that matter — read at a glance</h2>
+    <p class="lede">Not a dashboard. A quiet glyph in your menu bar and a popover that answers one question: will I make it to reset?</p>
+    <div class="grid">
+      <div class="feat">
+        <div class="fi">▚</div>
+        <h3>A glyph that is the data</h3>
+        <p>Two micro-bars — top is your 5-hour window, bottom is weekly. It fills continuously, not in three fake steps. Template by default, colored only when it matters.</p>
+      </div>
+      <div class="feat">
+        <div class="fi">◷</div>
+        <h3>Pacing, not just percentages</h3>
+        <p>A burn-rate verdict — “On pace” or “Over rate · ~2h to limit” — plus a target tick on every meter showing where you should be by now.</p>
+      </div>
+      <div class="feat">
+        <div class="fi">◑</div>
+        <h3>Per-model, when you want it</h3>
+        <p>Opus and Sonnet weekly windows, folded away by default so the two cards that matter stay front and center.</p>
+      </div>
+      <div class="feat">
+        <div class="fi">◔</div>
+        <h3>Warnings that don't nag</h3>
+        <p>Optional alerts at 50 / 75 / 90% that only fire when things get worse — and re-arm after each reset. No spam, ever.</p>
+      </div>
+      <div class="feat">
+        <div class="fi">✦</div>
+        <h3>Make it yours</h3>
+        <p>Four icon styles — dual-bar, single, ring, percentage — plus which window it tracks and whether it shows a number. Great defaults, deep settings.</p>
+      </div>
+      <div class="feat">
+        <div class="fi">⌘</div>
+        <h3>Native &amp; featherweight</h3>
+        <p>Real SwiftUI, a couple of megabytes, no Electron, no Dock icon. Universal (Apple Silicon + Intel), opens at login, stays out of your way.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="background:color-mix(in srgb, var(--ink) 2.5%, transparent);">
+  <div class="wrap">
+    <div class="kicker">How it works</div>
+    <h2>It reads Claude's own usage numbers</h2>
+    <p class="lede">No token to paste. Usage Bar uses the login Claude Code already has, and asks Claude's usage API for your exact 5-hour and weekly numbers — nothing else.</p>
+    <div class="steps">
+      <div class="step">
+        <h3>You press Connect</h3>
+        <p>Off by default — a fresh install reads nothing. Press <b>Connect</b> and it uses the token Claude Code already stores in your Keychain (click <b>Always Allow</b> when macOS asks). Disconnect any time.</p>
+        <span class="arw">→</span>
+      </div>
+      <div class="step">
+        <h3>Usage Bar asks Claude</h3>
+        <p>It calls Claude's official usage endpoint as Claude Code does and reads only your 5-hour + weekly numbers — the same as the <span class="mono">/usage</span> screen. Reading never spends quota.</p>
+        <span class="arw">→</span>
+      </div>
+      <div class="step">
+        <h3>You glance</h3>
+        <p>The menu-bar glyph and popover stay current while you work, and warn you before a window runs out.</p>
+      </div>
+    </div>
+    <p class="privacy-note" id="privacy"><b>Only Claude, only your usage.</b> The app talks to nothing but Claude's official API, authenticated with your existing Claude Code login (read from the macOS Keychain) — no analytics SDK, no account, no server of mine. Once a day it also checks this project's GitHub release for a newer build and adds +1 to an anonymous per-day install counter (that count is the only usage signal there is — nothing identifies your machine); both stop the moment you switch update checks off in Settings. It's otherwise used solely to read your usage numbers. Note: this uses an undocumented endpoint, and Anthropic's ToS restricts these tokens to Claude Code / Claude.ai — third-party use is a gray area, so use at your own discretion; it may break if Anthropic tightens enforcement.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Your menu bar, your call</div>
+    <h2>One calm default. Four ways to wear it.</h2>
+    <div class="icons">
+      <div class="ic">
+        <div class="demo"><span class="glyph"><s style="--f:22%"></s><s style="--f:34%"></s></span></div>
+        <div class="cap">Dual bar</div>
+      </div>
+      <div class="ic">
+        <div class="demo"><span class="bar1"></span></div>
+        <div class="cap">Single bar</div>
+      </div>
+      <div class="ic">
+        <div class="demo"><span class="ring"></span></div>
+        <div class="cap">Ring</div>
+      </div>
+      <div class="ic">
+        <div class="demo"><span class="pctglyph">42%</span></div>
+        <div class="cap">Percentage</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:color-mix(in srgb, var(--ink) 2.5%, transparent);">
+  <div class="wrap">
+    <div class="kicker">Looks right anywhere</div>
+    <h2>Designed for light and dark, both first-class</h2>
+    <p class="lede">The glyph tints itself to your menu bar; the popover is built for both grounds — not one theme flipped into the other.</p>
+    <div class="proof">
+      <div class="frame pl">
+        <div class="plabel">☀ Light</div>
+        <div class="minipop">
+          <div class="mh"><span class="mark"><i><b></b><b></b><b></b></i></span> Claude Usage <span class="mpill">live</span></div>
+          <div class="mrow"><div class="mtop">5-hour <b>62%</b></div><div class="minimeter"><i style="width:62%;background:#EC7A26"></i></div><div class="msub">Resets 4:10 PM · in 2h</div></div>
+          <div class="mrow"><div class="mtop">Weekly <b>44%</b></div><div class="minimeter"><i style="width:44%;background:#D69A12"></i></div><div class="msub">Resets Sat 6:00 AM · in 3d</div></div>
+        </div>
+      </div>
+      <div class="frame pd">
+        <div class="plabel" style="color:#F1F1F5">☾ Dark</div>
+        <div class="minipop">
+          <div class="mh"><span class="mark"><i><b></b><b></b><b></b></i></span> Claude Usage <span class="mpill">live</span></div>
+          <div class="mrow"><div class="mtop">5-hour <b>62%</b></div><div class="minimeter"><i style="width:62%;background:#F58A34"></i></div><div class="msub">Resets 4:10 PM · in 2h</div></div>
+          <div class="mrow"><div class="mtop">Weekly <b>44%</b></div><div class="minimeter"><i style="width:44%;background:#EBB328"></i></div><div class="msub">Resets Sat 6:00 AM · in 3d</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">Good to know</div>
+    <h2>Free — and it never spends your Claude usage</h2>
+    <p class="lede">It runs on the Claude subscription you already have. It reads only your usage <em>numbers</em> from Claude's API, so it never eats into your 5-hour or weekly budget.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:40px">
+      <div class="feat" style="flex:1 1 320px;max-width:360px">
+        <div class="fi">≡</div>
+        <h3>What does it cost?</h3>
+        <p>Nothing. No account, no subscription of its own, no analytics. It surfaces what Claude Code already knows — no extra API spend, for you or anyone you share it with.</p>
+      </div>
+      <div class="feat" style="flex:1 1 320px;max-width:360px">
+        <div class="fi">⌥</div>
+        <h3>Off until you connect</h3>
+        <p>No token, no config, and nothing is read until you press <b>Connect</b>. Then it uses the Claude Code login you already have — click <b>Always Allow</b> on the one-time Keychain prompt. Reading usage never spends your quota.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="kicker">Get it</div>
+    <h2>Free and tiny</h2>
+    <p class="lede">One line in Terminal installs it — no dragging, no dialog. (It isn't signed by a paid Apple account, so a plain download is blocked as <span class="mono">“damaged”</span>; the installer just clears that flag before first launch.)</p>
+    <div class="dl">
+      <div class="dl-card">
+        <div class="dl-hd">
+          <span class="mark" style="width:40px;height:40px;border-radius:11px"><i style="height:18px"><b></b><b></b><b></b></i></span>
+          <div class="grow">
+            <h3>Claude Usage Bar</h3>
+            <p>macOS 13+ · universal (Apple Silicon &amp; Intel) · ~1.5 MB</p>
+            <p class="dl-badges">
+              <img alt="latest version" height="20" loading="lazy"
+                   src="https://img.shields.io/github/v/release/tugrulcavus/claude-usage-bar?style=flat&amp;label=latest&amp;color=5b54e6&amp;labelColor=14141b">
+            </p>
+          </div>
+          <button class="btn btn-primary" id="copyInstall" type="button" data-cmd="curl -fsSL https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh | bash">⧉ Copy install command</button>
+        </div>
+        <div class="code mono">
+<pre><span class="c"># Paste in Terminal — downloads, clears the flag, installs, opens. No sudo.</span>
+curl -fsSL <span class="p">https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh</span> | bash</pre>
+        </div>
+        <p style="margin:14px 2px 0;font-size:13px;line-height:1.5;color:var(--muted)">
+          Paste it in Terminal (Applications ▸ Utilities). It downloads the app, clears the
+          Gatekeeper flag, installs to <span class="mono">/Applications</span>, and opens it — no <span class="mono">sudo</span>, no dialog.
+        </p>
+      </div>
+      <div class="badges">
+        <span><span class="dot"></span> Private by default</span>
+        <span><span class="dot"></span> No account</span>
+        <span><span class="dot"></span> Opt-out counting</span>
+        <span><span class="dot"></span> One-line install</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <a class="brand" href="#top"><span class="mark"><i><b></b><b></b><b></b></i></span> Usage&nbsp;Bar</a>
+      <p class="disc">The two Claude usage numbers that matter, in your menu bar. Reads your usage from Claude's official API using your existing Claude Code login — no analytics, no account.</p>
+      <p class="disc">Not affiliated with, or endorsed by, Anthropic. “Claude” is a trademark of Anthropic.</p>
+    </div>
+    <div class="foot-links">
+      <div>
+        <b>Product</b>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#download">Download</a>
+      </div>
+      <div>
+        <b>About</b>
+        <a href="#privacy">Privacy</a>
+        <a href="#download">Download</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var f5 = document.getElementById('f5'), p5 = document.getElementById('p5'),
+        t5 = document.getElementById('t5'), mbPct = document.getElementById('mbPct'),
+        mbGlyph = document.getElementById('mbGlyph'), verdict = document.getElementById('verdict');
+    var css = getComputedStyle(document.documentElement);
+    function sev(p) {
+      if (p < 50) return css.getPropertyValue('--ok');
+      if (p < 80) return css.getPropertyValue('--warn');
+      if (p < 95) return css.getPropertyValue('--high');
+      return css.getPropertyValue('--crit');
+    }
+    function paint(p) {
+      var c = sev(p).trim();
+      f5.style.width = p + '%'; f5.style.background = c;
+      p5.style.color = c; p5.innerHTML = Math.round(p) + '<small>%</small>';
+      mbPct.textContent = Math.round(p) + '%';
+      mbGlyph.querySelector('s').style.setProperty('--f', p + '%');
+      mbGlyph.classList.toggle('lit', p >= 50);
+      // pacing target sits a little ahead of actual until we go "over rate"
+      var target = Math.min(96, p * 0.7 + 22);
+      t5.style.left = target + '%';
+      if (p > target + 4) {
+        var eta = p < 95 ? '~' + (Math.round((100 - p) / 12) + 1) + 'h to limit' : 'limit reached';
+        verdict.className = 'verdict'; verdict.style.color = c;
+        verdict.style.background = 'color-mix(in srgb,' + c + ' 12%, transparent)';
+        verdict.innerHTML = '⚠ &nbsp;Over rate · ' + eta;
+      } else {
+        verdict.className = 'verdict good';
+        verdict.style.color = ''; verdict.style.background = '';
+        verdict.innerHTML = '✓ &nbsp;On pace';
+      }
+    }
+    if (reduce) { paint(74); return; }
+    var vals = [12, 20, 34, 50, 63, 78, 91, 63, 40, 24];
+    var i = 0;
+    paint(vals[0]);
+    setInterval(function () { i = (i + 1) % vals.length; paint(vals[i]); }, 1500);
+  })();
+
+  (function () {
+    var btn = document.getElementById('copyInstall');
+    if (!btn) return;
+    var label = btn.textContent;
+    btn.addEventListener('click', function () {
+      var cmd = btn.getAttribute('data-cmd');
+      var done = function () { btn.textContent = '✓ Copied'; setTimeout(function () { btn.textContent = label; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(cmd).then(done, done);
+      } else {
+        var t = document.createElement('textarea'); t.value = cmd; document.body.appendChild(t);
+        t.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(t); done();
+      }
+    });
+  })();
+</script>
