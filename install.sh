@@ -17,6 +17,7 @@ set -euo pipefail
 REPO="tugrulcavus/claude-usage-bar"
 APP="ClaudeUsageBar"
 APP_DISPLAY="Claude Usage Bar"
+BUNDLE_ID="com.tugrulcavus.claudeusagebar"
 
 # ── pretty output ────────────────────────────────────────────────────────────
 if [ -t 1 ]; then B=$'\033[1m'; DIM=$'\033[2m'; GRN=$'\033[32m'; RED=$'\033[31m'; YEL=$'\033[33m'; R=$'\033[0m'; else B=""; DIM=""; GRN=""; RED=""; YEL=""; R=""; fi
@@ -74,10 +75,25 @@ fi
 DEST="$DEST_DIR/$APP.app"
 
 # ── replace any existing copy (quit it first so the move is clean) ───────────
+# Quit by bundle id, never by name: `tell application "Claude Usage Bar"` does
+# not resolve (that string is only CFBundleDisplayName; AppleScript matches
+# CFBundleName, "ClaudeUsageBar") yet osascript still exits 0, so the old
+# `|| pkill` fallback never fired. The old copy kept running on a deleted
+# binary, `open` re-activated it instead of the new build, and the in-app
+# updater sat on "Updating…" for good. The exit code is not evidence here:
+# poll until the process is actually gone, then escalate.
 if pgrep -x "$APP" >/dev/null 2>&1; then
   say "Quitting the running copy…"
-  osascript -e "tell application \"$APP_DISPLAY\" to quit" >/dev/null 2>&1 || pkill -x "$APP" 2>/dev/null || true
-  sleep 1
+  osascript -e "tell application id \"$BUNDLE_ID\" to quit" >/dev/null 2>&1 || true
+  for _ in $(seq 10); do
+    pgrep -x "$APP" >/dev/null 2>&1 || break
+    sleep 0.5
+  done
+  if pgrep -x "$APP" >/dev/null 2>&1; then
+    pkill -x "$APP" 2>/dev/null || true
+    sleep 1
+    pkill -9 -x "$APP" 2>/dev/null || true
+  fi
 fi
 if [ -d "$DEST" ]; then
   say "Removing the old version…"
