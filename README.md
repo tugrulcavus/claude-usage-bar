@@ -62,9 +62,11 @@ already stores in your macOS Keychain (the `Claude Code-credentials` item) and c
 accepts it. It reads the official `five_hour` / `seven_day` `utilization` + `resets_at`.
 
 - First launch shows a **Connect** button; nothing is accessed until you click it.
-- On connect, macOS asks whether the app may read the `Claude Code-credentials` Keychain item —
-  click **Always Allow** so it can refresh silently. If you're not signed in to Claude Code, run
-  `claude` in Terminal first, then hit **Re-check**. You can **Disconnect** any time in Settings.
+- The read goes through macOS's own `security` tool — the same one Claude Code stores the item
+  with — so since 0.8.5 there is normally **no Keychain prompt at all**, and updates don't
+  re-ask. If macOS does ever ask, click **Always Allow** once. If you're not signed in to Claude
+  Code, run `claude` in Terminal first, then hit **Re-check**. You can **Disconnect** any time in
+  Settings.
 - A pasted `claude setup-token` token does **not** work here — as of early 2026 Anthropic's
   endpoint rejects those for third-party use, which is why the app reads Claude Code's own
   session token instead.
