@@ -3,12 +3,14 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh | bash
 #
-# Why this exists: the app is ad-hoc signed (no paid Apple Developer account),
-# so a *downloaded* copy gets Gatekeeper-quarantined and macOS refuses it with
-# "…is damaged and can't be opened." The only reliable free fix is to strip the
-# quarantine flag BEFORE the first launch — which is exactly what this does. It
-# downloads the latest release, removes the flag, installs to /Applications, and
-# opens it. No dialog, no "Open Anyway" hunt.
+# What it does: downloads the latest release, installs it to /Applications, and
+# opens it — no dragging, no dialogs. It is also what the in-app updater runs,
+# so there is only ever one install path to keep working.
+#
+# The app is signed with an Apple Developer ID and notarized, so Gatekeeper
+# accepts it on its own; the quarantine flag is still cleared below purely so
+# the very first launch is silent rather than showing the "downloaded from the
+# internet" confirmation.
 #
 # It never uses sudo, touches only the app bundle, and you can read every line
 # above before piping it to bash.
@@ -61,7 +63,7 @@ SRC="$(/usr/bin/find "$TMP/unpacked" -maxdepth 4 -name "$APP.app" -type d -print
 [ -n "$SRC" ] || die "Downloaded archive did not contain $APP.app."
 
 # ── strip Gatekeeper quarantine BEFORE first launch (the whole point) ─────────
-say "Clearing the Gatekeeper quarantine flag…"
+say "Clearing the download flag so the first launch is silent…"
 xattr -dr com.apple.quarantine "$SRC" 2>/dev/null || true
 xattr -cr "$SRC" 2>/dev/null || true
 

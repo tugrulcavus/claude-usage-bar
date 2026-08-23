@@ -17,21 +17,15 @@ macOS menu bar app that shows your Claude.ai plan usage — the **5-hour** and
 curl -fsSL https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh | bash
 ```
 
-It downloads the latest universal build (Apple Silicon & Intel), clears the Gatekeeper quarantine flag,
-installs to `/Applications`, and opens it. ([Read the script first](install.sh) if you like — it never
-uses `sudo`.)
+It downloads the latest universal build (Apple Silicon & Intel), installs it to `/Applications`, and
+opens it. ([Read the script first](install.sh) if you like — it never uses `sudo`.)
 
-**Manual (advanced):** download the `.zip` from [Releases](https://github.com/tugrulcavus/claude-usage-bar/releases/latest),
-drag `ClaudeUsageBar.app` to Applications, then run this **once — before first launch:**
+**Manual:** download the `.zip` from [Releases](https://github.com/tugrulcavus/claude-usage-bar/releases/latest)
+and drag `ClaudeUsageBar.app` into Applications. That's it — the app is **signed with a Developer ID and
+notarized by Apple**, so it opens on a double-click with no Gatekeeper warning and no Terminal step.
 
-```bash
-xattr -dr com.apple.quarantine "/Applications/ClaudeUsageBar.app"
-```
-
-> **Why the Terminal step?** The app is **ad-hoc signed** (no paid Apple Developer account), so a
-> *downloaded* copy is quarantined and macOS blocks it as *"…is damaged and can't be opened."* For ad-hoc
-> apps the **"Open Anyway"** button never appears — clearing the quarantine flag is the actual fix. The
-> one-liner does it for you.
+> Builds before 0.9.0 were ad-hoc signed and needed `xattr -dr com.apple.quarantine` before first launch.
+> That's no longer necessary.
 
 It's a **menu-bar app** — no Dock icon. Look top-right for the dual-bar gauge.
 
@@ -79,12 +73,12 @@ does **not** consume your plan's quota.
 
 ## Updates
 
-Once a day the app fetches `latest.json` from the repo's `meta` release. If it announces a newer
+Every fifteen minutes the app fetches `latest.json` from the repo's `meta` release. If it announces a newer
 version, the popover shows an **Update available** card — one click quits the app, re-runs the same
 installer a fresh install uses, and relaunches it. That file can also carry a short notice, which is
 how a heads-up reaches copies that are already running.
 
-The same daily pass bumps a public per-day counter by one (`abacus.jasoncameron.dev` — no account, no
+Once a day the same pass bumps a public per-day counter by one (`abacus.jasoncameron.dev` — no account, no
 payload), so "hits on 2026-07-25" is simply how many copies ran that day. That count is the only usage
 signal that exists; nothing identifies a machine, and there is no server of mine anywhere.
 
@@ -92,8 +86,8 @@ Turn it off in **Settings → Updates**: no update banners, and your machine sto
 
 ## Notes
 
-- Not sandboxed (reaches the network to call Claude's usage endpoint, and reads the Claude Code
-  Keychain item).
+- Signed with a Developer ID and notarized; runs under the hardened runtime. Not sandboxed (it
+  reaches the network to call Claude's usage endpoint, and reads the Claude Code Keychain item).
 - No `~/.claude` file scanning; usage comes only from the OAuth endpoint using Claude Code's token.
 
 ---

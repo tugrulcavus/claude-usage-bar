@@ -541,7 +541,7 @@
   <div class="wrap">
     <div class="kicker">Get it</div>
     <h2>Free and tiny</h2>
-    <p class="lede">One line in Terminal installs it — no dragging, no dialog. (It isn't signed by a paid Apple account, so a plain download is blocked as <span class="mono">“damaged”</span>; the installer just clears that flag before first launch.)</p>
+    <p class="lede">Signed and notarized by Apple, so a download just opens — no Gatekeeper warning, no Terminal step. The one-liner below is simply the fastest way: it fetches the latest build, puts it in <span class="mono">/Applications</span> and launches it.</p>
     <div class="dl">
       <div class="dl-card">
         <div class="dl-hd">
@@ -557,19 +557,21 @@
           <button class="btn btn-primary" id="copyInstall" type="button" data-cmd="curl -fsSL https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh | bash">⧉ Copy install command</button>
         </div>
         <div class="code mono">
-<pre><span class="c"># Paste in Terminal — downloads, clears the flag, installs, opens. No sudo.</span>
+<pre><span class="c"># Paste in Terminal — downloads, installs to /Applications, opens. No sudo.</span>
 curl -fsSL <span class="p">https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh</span> | bash</pre>
         </div>
         <p style="margin:14px 2px 0;font-size:13px;line-height:1.5;color:var(--muted)">
-          Paste it in Terminal (Applications ▸ Utilities). It downloads the app, clears the
-          Gatekeeper flag, installs to <span class="mono">/Applications</span>, and opens it — no <span class="mono">sudo</span>, no dialog.
+          Paste it in Terminal (Applications ▸ Utilities). It downloads the app, installs it to
+          <span class="mono">/Applications</span>, and opens it — no <span class="mono">sudo</span>, no dialog. Prefer to drag it
+          yourself? Grab the <a href="https://github.com/tugrulcavus/claude-usage-bar/releases/latest">zip from Releases</a>
+          and drop the app into Applications; it’s notarized, so it opens straight away.
         </p>
       </div>
       <div class="badges">
         <span><span class="dot"></span> Private by default</span>
         <span><span class="dot"></span> No account</span>
         <span><span class="dot"></span> Opt-out counting</span>
-        <span><span class="dot"></span> One-line install</span>
+        <span><span class="dot"></span> Signed &amp; notarized</span>
       </div>
     </div>
   </div>
