@@ -271,11 +271,11 @@
   .dl-hd h3 { margin: 0; font-size: 1.15rem; font-weight: 660; letter-spacing: -0.02em; }
   .dl-hd p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
   .dl-hd .dl-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .code { background: color-mix(in srgb, var(--ink) 5%, transparent); border-top: 1px solid var(--hair-2);
-    padding: 18px 24px; font-size: 0.86rem; color: var(--ink); overflow-x: auto; }
-  .code pre { margin: 0; }
-  .code .c { color: var(--faint); }
-  .code .p { color: var(--accent-ink); }
+  .steps { padding: 20px 24px 22px; }
+  .steps ol { margin: 0; padding-left: 1.35em; display: grid; gap: 8px; font-size: 0.92rem; }
+  .steps ol li::marker { color: var(--accent-ink); font-weight: 640; }
+  .steps .after { margin: 16px 0 0; font-size: 0.85rem; line-height: 1.55; color: var(--muted); }
+  .steps .after a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
   .badges { display: flex; gap: 8px 14px; flex-wrap: wrap; justify-content: center; margin-top: 20px; color: var(--faint);
     font-size: 0.82rem; font-weight: 500; }
   .badges span { display: inline-flex; align-items: center; gap: 6px; }
@@ -297,7 +297,7 @@
     .lede { font-size: 1rem; }
     .dl-hd { padding: 18px; gap: 12px; }
     .dl-hd .btn { width: 100%; justify-content: center; }
-    .code { padding: 14px 18px; font-size: 0.8rem; }
+    .steps { padding: 16px 18px 18px; }
     .code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
     .dl-card > p { padding: 0 18px 16px; }
     .foot-in { flex-direction: column; gap: 28px; }
@@ -541,7 +541,7 @@
   <div class="wrap">
     <div class="kicker">Get it</div>
     <h2>Free and tiny</h2>
-    <p class="lede">Signed and notarized by Apple, so a download just opens — no Gatekeeper warning, no Terminal step. The one-liner below is simply the fastest way: it fetches the latest build, puts it in <span class="mono">/Applications</span> and launches it.</p>
+    <p class="lede">Signed with an Apple Developer ID and notarized by Apple, so it opens on a double-click. No Terminal, no Gatekeeper warning.</p>
     <div class="dl">
       <div class="dl-card">
         <div class="dl-hd">
@@ -554,18 +554,21 @@
                    src="https://img.shields.io/github/v/release/tugrulcavus/claude-usage-bar?style=flat&amp;label=latest&amp;color=5b54e6&amp;labelColor=14141b">
             </p>
           </div>
-          <button class="btn btn-primary" id="copyInstall" type="button" data-cmd="curl -fsSL https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh | bash">⧉ Copy install command</button>
+          <a class="btn btn-primary" href="https://github.com/tugrulcavus/claude-usage-bar/releases/latest/download/ClaudeUsageBar.dmg">↓ Download for macOS</a>
         </div>
-        <div class="code mono">
-<pre><span class="c"># Paste in Terminal — downloads, installs to /Applications, opens. No sudo.</span>
-curl -fsSL <span class="p">https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh</span> | bash</pre>
+        <div class="steps">
+          <ol>
+            <li>Open the downloaded <span class="mono">ClaudeUsageBar.dmg</span>.</li>
+            <li>Drag the app onto the <b>Applications</b> shortcut beside it.</li>
+            <li>Open it from Applications — then look at the <b>top right</b> of your screen. It's a menu-bar app: no Dock icon, no window.</li>
+            <li>Click the gauge and press <b>Connect</b>. Until you do, it reads nothing at all.</li>
+          </ol>
+          <p class="after">
+            Prefer a zip, or want an older build? Everything is on
+            <a href="https://github.com/tugrulcavus/claude-usage-bar/releases/latest">Releases</a>.
+            Updates arrive in the app itself — one click, no re-download.
+          </p>
         </div>
-        <p style="margin:14px 2px 0;font-size:13px;line-height:1.5;color:var(--muted)">
-          Paste it in Terminal (Applications ▸ Utilities). It downloads the app, installs it to
-          <span class="mono">/Applications</span>, and opens it — no <span class="mono">sudo</span>, no dialog. Prefer to drag it
-          yourself? Grab the <a href="https://github.com/tugrulcavus/claude-usage-bar/releases/latest">zip from Releases</a>
-          and drop the app into Applications; it’s notarized, so it opens straight away.
-        </p>
       </div>
       <div class="badges">
         <span><span class="dot"></span> Private by default</span>
@@ -641,25 +644,6 @@ curl -fsSL <span class="p">https://raw.githubusercontent.com/tugrulcavus/claude-
     setInterval(function () { i = (i + 1) % vals.length; paint(vals[i]); }, 1500);
   })();
 
-  (function () {
-    var btn = document.getElementById('copyInstall');
-    if (!btn) return;
-    var label = btn.textContent;
-    btn.addEventListener('click', function () {
-      var cmd = btn.getAttribute('data-cmd');
-      var done = function () { btn.textContent = '✓ Copied'; setTimeout(function () { btn.textContent = label; }, 1600); };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(cmd).then(done, done);
-      } else {
-        var t = document.createElement('textarea'); t.value = cmd; t.readOnly = true;
-        t.setAttribute('aria-hidden', 'true');
-        t.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px';
-        document.body.appendChild(t);
-        t.select(); t.setSelectionRange(0, cmd.length); // iOS needs an explicit range
-        try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(t); done();
-      }
-    });
-  })();
 </script>
 </body>
 </html>

@@ -11,21 +11,27 @@ macOS menu bar app that shows your Claude.ai plan usage — the **5-hour** and
 
 ## Install
 
-**One line — nothing to drag:**
+**[Download ClaudeUsageBar.dmg →](https://github.com/tugrulcavus/claude-usage-bar/releases/latest/download/ClaudeUsageBar.dmg)**
+
+Open it, drag the app onto Applications, launch it. The app is **signed with an Apple Developer ID and
+notarized**, so it opens on a double-click — no Gatekeeper warning, no Terminal step. Universal build
+(Apple Silicon & Intel), macOS 13+.
+
+<details>
+<summary>Other ways in</summary>
+
+A `.zip` of the same build is on [Releases](https://github.com/tugrulcavus/claude-usage-bar/releases/latest).
+There is also a one-line installer, which is what the in-app updater runs — it downloads the latest zip,
+installs it to `/Applications` and opens it, and never uses `sudo`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tugrulcavus/claude-usage-bar/main/install.sh | bash
 ```
 
-It downloads the latest universal build (Apple Silicon & Intel), installs it to `/Applications`, and
-opens it. ([Read the script first](install.sh) if you like — it never uses `sudo`.)
+Builds before 0.9.0 were ad-hoc signed and needed `xattr -dr com.apple.quarantine` before first launch.
+That is no longer necessary.
 
-**Manual:** download the `.zip` from [Releases](https://github.com/tugrulcavus/claude-usage-bar/releases/latest)
-and drag `ClaudeUsageBar.app` into Applications. That's it — the app is **signed with a Developer ID and
-notarized by Apple**, so it opens on a double-click with no Gatekeeper warning and no Terminal step.
-
-> Builds before 0.9.0 were ad-hoc signed and needed `xattr -dr com.apple.quarantine` before first launch.
-> That's no longer necessary.
+</details>
 
 It's a **menu-bar app** — no Dock icon. Look top-right for the dual-bar gauge.
 
