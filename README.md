@@ -64,12 +64,32 @@ accepts it. It reads the official `five_hour` / `seven_day` `utilization` + `res
 - First launch shows a **Connect** button; nothing is accessed until you click it.
 - The read goes through macOS's own `security` tool — the same one Claude Code stores the item
   with — so since 0.8.5 there is normally **no Keychain prompt at all**, and updates don't
-  re-ask. If macOS does ever ask, click **Always Allow** once. If you're not signed in to Claude
-  Code, run `claude` in Terminal first, then hit **Re-check**. You can **Disconnect** any time in
+  re-ask. If macOS does ever ask, click **Always Allow** once. You can **Disconnect** any time in
   Settings.
 - A pasted `claude setup-token` token does **not** work here — as of early 2026 Anthropic's
   endpoint rejects those for third-party use, which is why the app reads Claude Code's own
   session token instead.
+
+### Keeping the login fresh
+
+That access token lasts about **eight hours**, and only Claude Code renews it. This bites harder
+than it sounds: the **Claude desktop app signs in with a claude.ai web session and never touches
+this Keychain item**, so someone who works there — rather than in a terminal — can have a token
+that has been dead for days. Terminal and the VS Code terminal are the same case as each other:
+both run the `claude` CLI, and both refresh the item whenever they do.
+
+So when the token has run out, Usage Bar runs **your own** `claude` CLI and lets Claude Code
+renew its own login, with its own OAuth client, exactly as if you had typed the command yourself.
+It first asks `claude auth status` whether you are signed in at all — if the answer is no, no
+command can help and the app says so rather than spinning. Otherwise it runs `claude doctor`, a
+read-only checkup that needs a working token and therefore makes Claude Code refresh one. That
+takes about a second, opens no terminal, and spends no quota. Switch it off under **Settings →
+Keep the login fresh automatically**.
+
+Usage Bar deliberately does *not* spend the refresh token itself. That would mean presenting as
+Anthropic's own OAuth client from a third-party app in order to mint new tokens — a different
+thing from reading a token your Claude Code already holds. If the CLI isn't installed, the app
+says so and asks you to run `claude` yourself; it can't sign in on your behalf.
 
 Caveats: this endpoint is **undocumented**, and Anthropic's ToS restricts these OAuth tokens to
 Claude Code / Claude.ai — using them from a third-party app is a **gray area**, so use at your
@@ -95,6 +115,8 @@ Turn it off in **Settings → Updates**: no update banners, and your machine sto
 - Signed with a Developer ID and notarized; runs under the hardened runtime. Not sandboxed (it
   reaches the network to call Claude's usage endpoint, and reads the Claude Code Keychain item).
 - No `~/.claude` file scanning; usage comes only from the OAuth endpoint using Claude Code's token.
+- The only subprocesses it ever runs are `/usr/bin/security` (to read the login) and your own
+  `claude` CLI (to have Claude Code renew it).
 
 ---
 
