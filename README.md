@@ -17,6 +17,12 @@ Open it, drag the app onto Applications, launch it. The app is **signed with an 
 notarized**, so it opens on a double-click — no Gatekeeper warning, no Terminal step. Universal build
 (Apple Silicon & Intel), macOS 13+.
 
+> **Requires Claude Code's command-line tool**, installed and signed in on that Mac at least once.
+> Usage Bar reads the login `claude` stores in the Keychain; working only in the **Claude desktop app is
+> not enough**, because it signs in with its own web session and leaves no login Usage Bar can read. Run
+> `claude` once and you're done — from then on Usage Bar keeps that login fresh by itself and you never
+> need a terminal again.
+
 <details>
 <summary>Other ways in</summary>
 
