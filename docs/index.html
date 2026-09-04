@@ -467,7 +467,7 @@
         <p>The menu-bar glyph and popover stay current while you work, and warn you before a window runs out.</p>
       </div>
     </div>
-    <p class="privacy-note" id="privacy"><b>Only Claude, only your usage.</b> The app talks to nothing but Claude's official API, authenticated with your existing Claude Code login (read from the macOS Keychain) — no analytics SDK, no account, no server of mine. Once a day it also checks this project's GitHub release for a newer build and adds +1 to an anonymous per-day install counter (that count is the only usage signal there is — nothing identifies your machine); both stop the moment you switch update checks off in Settings. It's otherwise used solely to read your usage numbers. Note: this uses an undocumented endpoint, and Anthropic's ToS restricts these tokens to Claude Code / Claude.ai — third-party use is a gray area, so use at your own discretion; it may break if Anthropic tightens enforcement.</p>
+    <p class="privacy-note" id="privacy"><b>Only Claude, only your usage.</b> The app talks to nothing but Claude's official API, authenticated with your existing Claude Code login (read from the macOS Keychain) — no analytics SDK, no account, no telemetry, no server of mine. Every fifteen minutes it also downloads one small file from this project's GitHub release to see whether a newer build exists — a download, not a report — and that stops the moment you switch update checks off in Settings. Earlier versions bumped an anonymous per-day install counter; it was removed in 0.9.2, because its namespace had to ship inside the app, which made the total both readable and inflatable by anyone. Note: this uses an undocumented endpoint, and Anthropic's ToS restricts these tokens to Claude Code / Claude.ai — third-party use is a gray area, so use at your own discretion; it may break if Anthropic tightens enforcement.</p>
   </div>
 </section>
 
@@ -557,6 +557,8 @@
             <p class="dl-badges">
               <img alt="latest version" height="20" loading="lazy"
                    src="https://img.shields.io/github/v/release/tugrulcavus/claude-usage-bar?style=flat&amp;label=latest&amp;color=5b54e6&amp;labelColor=14141b">
+              <img alt="total downloads" height="20" loading="lazy"
+                   src="https://img.shields.io/github/downloads/tugrulcavus/claude-usage-bar/total?style=flat&amp;label=downloads&amp;color=5b54e6&amp;labelColor=14141b">
             </p>
           </div>
           <a class="btn btn-primary" href="https://github.com/tugrulcavus/claude-usage-bar/releases/latest/download/ClaudeUsageBar.dmg">↓ Download for macOS</a>
@@ -586,7 +588,7 @@
       <div class="badges">
         <span><span class="dot"></span> Private by default</span>
         <span><span class="dot"></span> No account</span>
-        <span><span class="dot"></span> Opt-out counting</span>
+        <span><span class="dot"></span> No telemetry</span>
         <span><span class="dot"></span> Signed &amp; notarized</span>
       </div>
     </div>

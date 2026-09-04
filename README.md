@@ -45,10 +45,10 @@ It's a **menu-bar app** — no Dock icon. Look top-right for the dual-bar gauge.
 
 **Free, and it never spends your Claude usage.** It reads only your usage *numbers* from Claude's API (a
 metadata call), so it doesn't consume your 5-hour / weekly budget or cost money. Besides Claude's own
-endpoint the app makes exactly two other calls, both once a day and both switchable off: it downloads a
-small `latest.json` from this repo's GitHub release to see whether a newer build exists, and it adds +1
-to an anonymous per-day install counter (see [Updates](#updates)). No account, no identifier, no
-analytics SDK — nothing about you or your usage leaves the machine.
+endpoint the app makes exactly one other call, and it's switchable off: it downloads a small
+`latest.json` from this repo's GitHub release to see whether a newer build exists (see
+[Updates](#updates)). No account, no identifier, no analytics SDK, no telemetry of any kind — nothing
+about you or your usage leaves the machine.
 
 ## Features
 
@@ -110,11 +110,13 @@ version, the popover shows an **Update available** card — one click quits the 
 installer a fresh install uses, and relaunches it. That file can also carry a short notice, which is
 how a heads-up reaches copies that are already running.
 
-Once a day the same pass bumps a public per-day counter by one (`abacus.jasoncameron.dev` — no account, no
-payload), so "hits on 2026-07-25" is simply how many copies ran that day. That count is the only usage
-signal that exists; nothing identifies a machine, and there is no server of mine anywhere.
+Up to 0.9.1 that same pass also bumped an anonymous public per-day counter, to give some idea of how
+many copies were running. **It was removed in 0.9.2.** The counter's namespace had to ship inside the
+binary, so anyone could read the totals and anyone could inflate them — a number both public and
+worthless. GitHub's per-asset download counts cover the same ground without the app phoning anywhere.
 
-Turn it off in **Settings → Updates**: no update banners, and your machine stops being counted.
+So the update check is now the only thing the app does besides reading your usage, and turning it off in
+**Settings → Updates** means the app makes no request at all except to Claude's usage endpoint.
 
 ## Notes
 
